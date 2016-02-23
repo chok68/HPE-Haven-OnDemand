@@ -26,7 +26,7 @@ For a full list of all the APIs and to try them out, check out [https://www.have
 
 ### Using Unmanaged package
 
-- Login in the Salesforce account and install [package](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t280000006brG).
+- Login in the Salesforce account and install [package](https://login.salesforce.com/packaging/installPackage.apexp?p0=04t360000006YUg).
 
 ### Using ANT
 
@@ -53,6 +53,72 @@ HODClient client = new HODClient(apiKey);
 
 
 ```
+
+### Sample get sync call (INDEX_STATUS)
+
+``` Apex
+try
+{
+      // create client
+      HODClient client = new HODClient(apiKey, version);
+      List<Param> params = new List<Param>(); 
+      params.add(new Param('index','test'));
+      // get response
+      Map<String,Object> response= client.getRequest(params, HODAPP.INDEX_STATUS, HODClientConstants.REQ_MODE.SYNC);
+}
+catch (HODClientException ex)
+{
+     String message = ex.getMessage();
+     System.debug(message);
+}
+
+```
+
+### Sample get async call (list resources)
+
+``` Apex
+try{
+      // create client get job id
+      HODClient client = new HODClient(apiKey, version);
+      List<Param> params = new List<Param>(); 
+      params.add(new Param('flavor',new List<String>{'standard','explorer'}));
+      params.add(new Param('type',new List<String>{'content','connector'}));
+      // get response
+      Map<String,Object> data = client.getRequest(params, HODApp.LIST_RESOURCES, HODClientConstants.REQ_MODE.ASYNC);
+      String jobId = data.get(HODClientConstants.JOB_ID);
+}
+catch (HODClientException ex)
+{
+     String message = ex.getMessage();
+     System.debug(message);
+}
+
+// check job status
+// if it is finished then getJobResult method can be used to get jobResult
+try{
+      Map<String,Object> data = client.getJobStatus(jobID);
+      System.assert(data.get(HODClientConstants.JOB_RESPONSE_STATUS) == HODClientConstants.JOB_RESPONSE_FINISHED);
+}
+catch (HODClientException ex)
+{
+     String message = ex.getMessage();
+     System.debug(message);
+}
+
+// get job data
+try{
+      Map<String,Object> data = client.getJobResult(jobID);
+}
+catch (HODClientException ex)
+{
+     String message = ex.getMessage();
+     System.debug(message);
+}
+
+
+```
+
+
 ### Sample post sync call (INDEX_STATUS)
 
 ``` Apex
@@ -193,6 +259,23 @@ Object value = response.get('key');
 ```
 
 ### HODClient Instance Methods
+
+``` Apex
+
+    /**
+     * calls POST Request
+     *
+     * @param params params to be passed in query string
+     * @param hodApp end point to be called
+     * @param mode sync/async
+     * @return Map<String,Object> response
+     * @throws HODClientException 
+     */ 
+    public Map<String,Object> getRequest(Map<String,Object> params, String hodApp, HODClientConstants.REQ_Mode mode)
+
+
+```
+
 
 ``` Apex
 
