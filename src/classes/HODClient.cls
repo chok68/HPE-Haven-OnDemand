@@ -2,14 +2,12 @@
  * HODClient class to consume HPE Haven OnDemand API
  *
  * @version 1.0
-
  */
 public class HODClient {
-   
     private String apiKey = '';
     private String version = '';
     private String url = '';
-   
+
     /**
      * Get URL to call the end point
      * 
@@ -19,10 +17,10 @@ public class HODClient {
      */
     private static String getUrlString(String hodApp,String version,HODClientConstants.REQ_MODE mode)
     {
-    	String callMode = mode.name().toLowerCase();
+        String callMode = mode.name().toLowerCase();
         return HODClientConstants.HOD_URL+HODClientConstants.HOD_API_URL+'/'+callMode+hodApp+'/'+version;
     }
-    
+
     /**
      * Get URL to get job status
      */
@@ -30,7 +28,7 @@ public class HODClient {
     {
         return  HODClientConstants.HOD_URL+'/'+HODClientConstants.JOB_STATUS;
     }
-    
+
     /**
      * Get URL to get job result
      */
@@ -38,7 +36,7 @@ public class HODClient {
     {
         return HODClientConstants.HOD_URL+'/'+HODClientConstants.JOB_RESULT;
     }
-    
+
    /**
     * Constructor
     *
@@ -50,7 +48,7 @@ public class HODClient {
         this.apiKey = apiKey;
         this.version = version;
     }
-    
+
    /**
     * Constructor
     *
@@ -58,12 +56,10 @@ public class HODClient {
     */
     public HODClient(String apiKey)
     {
-    	this.apiKey = apiKey;
+        this.apiKey = apiKey;
         this.version = HODClientConstants.DEFAULT_VERSION;
     }
-    
-    
-    
+
     /**
      * calls POST Request 
      *
@@ -81,8 +77,25 @@ public class HODClient {
                                                 this.apiKey,
                                                 params);
     }
-  	
-    
+
+    /**
+     * calls GET Request 
+     *
+     * @param params params to be passed
+     * @param hodApp end point to be called
+     * @param mode sync/async
+     * @return data deserialized response
+     * @throws HODClientException
+     */ 
+    public Map<String,Object> getRequest(List<Param> params, String hodApp, HODClientConstants.REQ_Mode mode)
+    {
+        String url = HODClient.GetUrlString(hodApp, this.version, mode);
+        return HODClientHTTPClient.invokeHODApi(url, 
+                                                HODClientConstants.GET_REQUEST, 
+                                                this.apiKey,
+                                                params);
+    }
+
     /**
      * Get status of the job submitted
      * @param jobId id of the job submitted
@@ -96,7 +109,7 @@ public class HODClient {
                                               this.apiKey,
                                               new List<Param>());
     }
-    
+
     /**
      * Get result of the job submitted
      * @param jobId id of the job submitted
@@ -109,6 +122,5 @@ public class HODClient {
                                               HODClientConstants.POST_REQUEST, 
                                               this.apiKey,
                                               new List<Param>());
-      
     }
 }
